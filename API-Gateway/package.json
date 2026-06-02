@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "express": "^5.2.1",
+    "http-proxy": "^1.18.1",
+    "http-proxy-middleware": "^4.0.0",
+    "install": "^0.13.0",
+    "npm": "^11.16.0"
+  }
+}
