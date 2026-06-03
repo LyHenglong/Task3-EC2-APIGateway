@@ -4,12 +4,23 @@ const httpProxy = require('http-proxy');
 const app = express();
 const proxy = httpProxy.createProxyServer();
 
-// 1. Define the routing map for your microservices
+// =========================================================================
+// AWS NETWORK CONFIGURATION (Step 9 Requirements)
+// Replace these placeholders with your actual EC2 Instance Public IPs
+// =========================================================================
+const STUDENT_EC2_IP = '54.210.xx.xx';  // Public IP of Student EC2 (Step 10.1)
+const TEACHER_EC2_IP = '3.85.xx.xx';    // Public IP of Teacher EC2 (Step 10.2)
+
+// Define the routing map pointing across your EC2 instances
 const routes = {
+    // Reg & Login live on the SAME EC2 instance as this gateway (Step 10.3),
+    // so they can safely keep using 'localhost' but with their assigned ports.
     '/register': 'http://localhost:5001',   // Registration Service
     '/login':    'http://localhost:5002',   // Authentication Service
-    '/student':  'http://localhost:5003',   // Student Service
-    '/teacher':  'http://localhost:5004'    // Teacher Service
+    
+    // Student & Teacher live on separate external EC2 instances (Steps 10.1 & 10.2)
+    '/student':  `http://${STUDENT_EC2_IP}:5003`,   // Student Service (Port 5003)
+    '/teacher':  `http://${TEACHER_EC2_IP}:5004`    // Teacher Service (Port 5004)
 };
 
 // 2. Catch all incoming requests to Port 5000
@@ -38,5 +49,5 @@ app.use((req, res) => {
 // 3. Start the Gateway on Port 5000
 const PORT = 5000;
 app.listen(PORT, () => {
-    console.log(`=====> API Gateway active on http://localhost:${PORT} <=====`);
+    console.log(`=====> API Gateway active on AWS EC2 Port ${PORT} <=====`);
 });
